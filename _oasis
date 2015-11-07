@@ -1,0 +1,35 @@
+OASISFormat: 0.4
+Name:        Tree_layout
+Version:     0.1.0
+Synopsis:    Tree_layout
+Authors:     Gabriel Radanne
+License:     ISC
+Plugins:     META (0.4), DevFiles (0.4)
+BuildTools:  ocamlbuild
+
+AlphaFeatures: ocamlbuild_more_args
+
+Library tree_layout
+  Path: src
+  Modules: Tree_layout
+  InternalModules: Tree_layout_utils
+  BuildDepends:
+
+Document "tree_layout"
+  Type: ocamlbuild (0.3)
+  BuildTools: ocamldoc
+  Title: API reference for Tree_layout
+  XOCamlbuildPath: .
+  XOCamlbuildExtraArgs:
+    "-docflags '-t Functoria -colorize-code -short-functors -charset utf-8'"
+  XOCamlbuildLibraries: tree_layout
+
+SourceRepository head
+  Type: git
+  Location: https://github.com/Drup/tree_layout.git
+  Browser: https://github.com/Drup/tree_layout
+
+
+#Local Variables:
+#compile-command: "oasis setup"
+#End:

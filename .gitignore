@@ -1,0 +1,7 @@
+*~
+_build/
+*.native
+setup.bin
+setup.data
+setup.log
+*.docdir
