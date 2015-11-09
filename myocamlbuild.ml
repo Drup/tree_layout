@@ -1,5 +1,5 @@
 (* OASIS_START *)
-(* DO NOT EDIT (digest: a06ef9e0375152c88793464bc7589177) *)
+(* DO NOT EDIT (digest: 1dffd00fbf2e47abad62e29f8621e9ba) *)
 module OASISGettext = struct
 (* # 22 "src/oasis/OASISGettext.ml" *)
 
@@ -610,7 +610,7 @@ let package_default =
      MyOCamlbuildBase.lib_ocaml = [("tree_layout", ["src"], [])];
      lib_c = [];
      flags = [];
-     includes = []
+     includes = [("tests", ["src"])]
   }
   ;;
 

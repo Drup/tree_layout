@@ -20,4 +20,5 @@ install: ["ocaml" "setup.ml" "-install"]
 remove: ["ocamlfind" "remove" "tree_layout"]
 depends: [
   "ocamlfind" {build}
+  "tyxml" {test}
 ]

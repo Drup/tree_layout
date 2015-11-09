@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: ab4ab2654444ba5a15a4c04d6f8a9931)
+# DO NOT EDIT (digest: b26d61ce2b8da5aafbaa52dd801f2a4e)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -16,6 +16,11 @@ true: annot, bin_annot
 "_darcs": not_hygienic
 # Library tree_layout
 "src/tree_layout.cmxs": use_tree_layout
+# Executable tree_test
+<tests/tree.{native,byte}>: pkg_tyxml
+<tests/tree.{native,byte}>: use_tree_layout
+<tests/*.ml{,i,y}>: pkg_tyxml
+<tests/*.ml{,i,y}>: use_tree_layout
 # OASIS_STOP
 
 true: warn(+A-4-6-9-40-42-44)

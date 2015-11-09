@@ -24,6 +24,22 @@ Document "tree_layout"
     "-docflags '-t Functoria -colorize-code -short-functors -charset utf-8'"
   XOCamlbuildLibraries: tree_layout
 
+# Tests
+Executable tree_test
+  Path: tests
+  MainIs: tree.ml
+  Install: false
+  Build$: flag(tests)
+  CompiledObject: best
+  BuildDepends: tree_layout, tyxml
+
+Test tree_test
+  Command: $tree_test "tree.svg"
+  WorkingDirectory: _build
+  TestTools: tree_test
+  Run$: flag(tests)
+
+
 SourceRepository head
   Type: git
   Location: https://github.com/Drup/tree_layout.git
