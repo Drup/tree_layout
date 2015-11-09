@@ -9,6 +9,10 @@ BuildTools:  ocamlbuild
 
 AlphaFeatures: ocamlbuild_more_args
 
+Flag benchmark
+  Description: Run benchmarks
+  Default: false
+
 Library tree_layout
   Path: src
   Modules: Tree_layout
@@ -39,6 +43,14 @@ Test tree_test
   TestTools: tree_test
   Run$: flag(tests)
 
+# Benchmark
+Executable tree_benchmark
+  Path: benchmark
+  MainIs: tree_bench.ml
+  Install: false
+  Build$: flag(benchmark)
+  CompiledObject: best
+  BuildDepends: tree_layout, benchmark
 
 SourceRepository head
   Type: git
