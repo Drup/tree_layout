@@ -14,6 +14,8 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *)
 
+type pos = { x : float ; y : float }
+
 module type S = sig
 
   type graph
@@ -23,7 +25,10 @@ module type S = sig
 
   val tree_layout :
     distance:(vertex -> vertex -> float) ->
-    graph -> vertex -> (float * int) H.t
+    graph -> vertex -> pos H.t
+
+  val boundaries :
+    ?borders:pos -> pos H.t -> graph -> vertex -> pos * pos
 end
 
 module Raw : sig

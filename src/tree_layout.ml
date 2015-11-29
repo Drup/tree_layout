@@ -16,6 +16,8 @@
 
 open Tree_layout_utils
 
+type pos = { x : float ; y : float }
+
 module type S = sig
 
   type graph
@@ -25,7 +27,10 @@ module type S = sig
 
   val tree_layout :
     distance:(vertex -> vertex -> float) ->
-    graph -> vertex -> (float * int) H.t
+    graph -> vertex -> pos H.t
+
+  val boundaries :
+    ?borders:pos -> pos H.t -> graph -> vertex -> pos * pos
 end
 
 (** This is a direct implementation of
@@ -205,8 +210,8 @@ module Raw = struct
 
     let rec second_walk s result level v m =
       let x = get_prelim s v +. m in
-      let y = level in
-      H.add result v (x,y) ;
+      let y = float level in
+      H.add result v {x;y} ;
       let f w = second_walk s result (level+1) w (m +. get_mod s v) in
       Seq.iter f (G.succ s.g v) ;
       ()
@@ -228,7 +233,32 @@ module Raw = struct
       second_walk s result 0 r (-. (H.find prelim r)) ;
       result
 
+    type bounds = {
+      mutable x0 : float ;
+      mutable y0 : float ;
+      mutable x1 : float ;
+      mutable y1 : float
+    }
+
+    let update_bound b {x;y} =
+      b.x0 <- min b.x0 x ;
+      b.y0 <- min b.y0 y ;
+      b.x1 <- max b.x1 x ;
+      b.y1 <- max b.y1 y
+
+    let boundaries ?(borders={x=0.;y=0.;})h g v =
+      let b = { x0 = 0. ; y0 = 0. ; x1 = 0. ; y1 = 0. } in
+      let rec walk g v =
+        update_bound b (H.find h v) ;
+        G.succ g v (walk g)
+      in
+      walk g v ;
+      let pos = {x = b.x0 -. borders.x ; y = b.y0 -. borders.y } in
+      let size = {
+        x = 2.*.borders.x +. b.x1 -. b.x0 ;
+        y = 2.*.borders.y +. b.y1 -. b.y0}
+      in
+      (pos, size)
 
   end
-
 end
