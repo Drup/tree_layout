@@ -24,3 +24,4 @@ depends: [
   "ocamlfind" {build}
   "tyxml" {test}
 ]
+available: ocaml-version >= "4.01.0"
