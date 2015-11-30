@@ -46,8 +46,8 @@ module Layered = struct
   module type TREE = sig
     type t
     module V : Hashtbl.HashedType
-    val succ : t -> V.t -> (V.t -> unit) -> unit
-    val rev_succ : t -> V.t -> (V.t -> unit) -> unit
+    val children : t -> V.t -> (V.t -> unit) -> unit
+    val rev_children : t -> V.t -> (V.t -> unit) -> unit
     val rightmost_child : t -> V.t -> V.t option
     val leftmost_child : t -> V.t -> V.t option
     val is_parent : t -> parent:V.t -> child:V.t -> bool
@@ -100,7 +100,7 @@ module Layered = struct
       | Some i -> i
       | None ->
         let f i v = H.add s.numbers v (i+1) in
-        Seq.iteri f @@ G.succ s.g parent ;
+        Seq.iteri f @@ G.children s.g parent ;
         H.find s.numbers v
 
     let move_subtree ~s ~parent wm wp shift =
@@ -122,7 +122,7 @@ module Layered = struct
         shift := !shift +. get ~default:0. s.shift w +. !change ;
         ()
       in
-      Seq.iter f (G.rev_succ s.g v) ;
+      Seq.iter f (G.rev_children s.g v) ;
       ()
 
     let ancestor ~s ~defaultAncestor ~parent vim =
@@ -197,7 +197,7 @@ module Layered = struct
                apportion ~s ~parent:v
                  ~defaultAncestor
                  ~sibling w)
-            vl (G.succ s.g v) ;
+            vl (G.children s.g v) ;
           execute_shifts s v ;
           let midpoint =
             ((get_prelim s vl) +. (get_prelim s vr)) /. 2.
@@ -215,7 +215,7 @@ module Layered = struct
       let y = float level in
       H.add result v {x;y} ;
       let f w = second_walk s result (level+1) w (m +. get_mod s v) in
-      Seq.iter f (G.succ s.g v) ;
+      Seq.iter f (G.children s.g v) ;
       ()
 
     let tree_layout ~distance g r =
@@ -252,7 +252,7 @@ module Layered = struct
       let b = { x0 = 0. ; y0 = 0. ; x1 = 0. ; y1 = 0. } in
       let rec walk g v =
         update_bound b (H.find h v) ;
-        G.succ g v (walk g)
+        G.children g v (walk g)
       in
       walk g v ;
       let pos = {x = b.x0 -. borders.x ; y = b.y0 -. borders.y } in
