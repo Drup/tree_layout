@@ -47,21 +47,18 @@ ARCHIVE = https://github.com/Drup/$(NAME)/archive/$(VERSION).tar.gz
 
 # doc update
 
-doc/html/.git:
-	mkdir -p doc/html
-	cd doc/html && (\
-		git init && \
-		git remote add origin git@github.com:Drup/$(NAME).git && \
-		git checkout -b gh-pages \
+doc/repo/.git:
+	mkdir -p doc/repo
+	cd doc/repo && (\
+		git clone -b gh-pages git@github.com:Drup/$(NAME).git . \
 	)
 
-gh-pages: doc/html/.git
-	cd doc/html && git checkout gh-pages
-	rm -f doc/html/*.html
-	cp $(NAME).docdir/*.html doc/html/
-	cd doc/html && git add *.html
-	cd doc/html && git commit -a -m "Doc updates"
-	cd doc/html && git push origin gh-pages
+gh-pages: doc/repo/.git doc
+	rm -f doc/repo/dev/*
+	cp api.docdir/* doc/repo/dev/
+	cd doc/repo && git add --all dev
+	cd doc/repo && git commit -a -m "Doc updates"
+	cd doc/repo && git push origin gh-pages
 
 # release
 

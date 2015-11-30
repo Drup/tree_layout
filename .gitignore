@@ -5,3 +5,4 @@ setup.bin
 setup.data
 setup.log
 *.docdir
+doc/repo/
