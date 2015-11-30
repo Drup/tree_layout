@@ -2,24 +2,22 @@
 type tree =
   | Node of tree * int * tree
   | Leaf of int
+let label (Leaf i | Node (_,i,_)) = i
 
 module T = struct
 
   type t = unit
   module V = struct
     type t = tree
-    let equal t1 t2 = match t1, t2 with
-      | Node (_,i1,_), Node (_,i2,_) -> i1 = i2
-      | Leaf i1, Leaf i2 -> i1 = i2
-      | _ -> false
-    let hash = function Node (_,i,_) | Leaf i -> Hashtbl.hash i
+    let equal t1 t2 = label t1 = label t2
+    let hash t = Hashtbl.hash (label t)
   end
 
-  let succ () v k = match v with
+  let children () v k = match v with
     | Leaf _ -> ()
     | Node (t1, _, t2) -> k t1 ; k t2
 
-  let rev_succ () v k = match v with
+  let rev_children () v k = match v with
     | Leaf _ -> ()
     | Node (t1, _, t2) -> k t2 ; k t1
 
@@ -37,7 +35,7 @@ module T = struct
 
 end
 
-include Tree_layout.Raw.Make(T)
+module L = Tree_layout.Make(T)
 
 let distance _ _ = 1.
 let node, leaf =
@@ -55,7 +53,7 @@ let rec make n =
 let benchs =
   Random.self_init () ;
   List.map
-    (fun i -> (string_of_int i, tree_layout ~distance (), make i))
+    (fun i -> (string_of_int i, L.layered ~distance (), make i))
     [ 1000 ; 5000 ; 10000 ; 20000 ; 30000 ; 50000 ]
 
 open Benchmark

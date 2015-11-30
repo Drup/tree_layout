@@ -1,5 +1,3 @@
-open Tree_layout
-
 type info = {label : int ; w : float ; h : float }
 
 type tree = Node of tree * info * tree | Leaf of info
@@ -13,11 +11,11 @@ module T = struct
     let hash = Hashtbl.hash
   end
 
-  let succ () v k = match v with
+  let children () v k = match v with
     | Leaf _ -> ()
     | Node (t1, _, t2) -> k t1 ; k t2
 
-  let rev_succ () v k = match v with
+  let rev_children () v k = match v with
     | Leaf _ -> ()
     | Node (t1, _, t2) -> k t2 ; k t1
 
@@ -35,7 +33,7 @@ module T = struct
 
 end
 
-module L =  Raw.Make(T)
+module L = Tree_layout.Make(T)
 
 module Gen = struct
 
@@ -61,6 +59,7 @@ let distance l1 l2 = width l1 /. 2. +. 0.2 +. width l2 /. 2.
 
 module Output = struct
   open Svg
+  open Tree_layout
 
   let line p1 p2 =
     M.(path ~a:[
@@ -103,7 +102,7 @@ module Output = struct
         svg_lines h t2
 
   let doc seed h t =
-    let pos, size = L.boundaries ~borders:{x=1.;y=1.} h () t in
+    let pos, size = L.boundaries ~margins:{x=1.;y=1.} h in
     M.(svg ~a:[
         a_width (1200., Some `Px) ; a_height (700., Some `Px) ;
         a_viewbox (pos.x, pos.y, size.x, size.y) ;
@@ -119,7 +118,7 @@ let () =
   Random.init seed ;
 
   let tree = Gen.make 50 in
-  let h = L.tree_layout ~distance () tree in
+  let h = L.layered ~distance () tree in
   let file = open_out Sys.argv.(1) in
   let doc = Output.doc seed h tree in
   Svg.P.print ~output:(output_string file) doc ;
