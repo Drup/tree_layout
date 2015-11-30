@@ -14,37 +14,63 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *)
 
+(** Algorithms to layout trees in a pretty manner. *)
+
+(** A position (or a size). *)
 type pos = { x : float ; y : float }
 
+(** The output signature for a certain layout engine. *)
 module type S = sig
 
-  type graph
+  type t
+  (** A tree *)
+
   type vertex
+  (** A vertex of the tree. *)
 
   module H : Hashtbl.S with type key = vertex
 
-  val tree_layout :
+  (** [tree_layout ~distance g v] returns the layered layout for
+      the tree [g] rooted in [v]. Layered layout are such that
+      vertices with the same depth have the same vertical coordinate.
+
+      [distance v1 v2] should return the horizontal distance
+      between [v1] and [v2] placed at the same depth.
+
+      The returned hash table contains one binding per
+      accessible vertex in [g].
+
+      @see <http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.16.8757>
+      Improving Walker's Algorithm to Run in Linear Time
+  *)
+  val layered :
     distance:(vertex -> vertex -> float) ->
-    graph -> vertex -> pos H.t
+    t -> vertex -> pos H.t
 
+  (** [boundaries ~margins positions] returns a pair [(pos, size)]
+      defining a rectangle containing the positions in [positions].
+
+      The option argument [margins] add a margin around the rectangle.
+  *)
   val boundaries :
-    ?borders:pos -> pos H.t -> graph -> vertex -> pos * pos
+    ?margins:pos -> pos H.t -> pos * pos
 end
 
-module Layered : sig
-
-  module type TREE = sig
-    type t
-    module V : Hashtbl.HashedType
-    val succ : t -> V.t -> (V.t -> unit) -> unit
-    val rev_succ : t -> V.t -> (V.t -> unit) -> unit
-    val rightmost_child : t -> V.t -> V.t option
-    val leftmost_child : t -> V.t -> V.t option
-    val is_parent : t -> parent:V.t -> child:V.t -> bool
-  end
-
-  module Make (G : TREE) :
-    S with type graph := G.t
-       and type vertex := G.V.t
-
+(** The input signature for {!Make} *)
+module type TREE = sig
+  type t
+  module V : Hashtbl.HashedType
+  val children : t -> V.t -> (V.t -> unit) -> unit
+  val rev_children : t -> V.t -> (V.t -> unit) -> unit
+  val rightmost_child : t -> V.t -> V.t option
+  val leftmost_child : t -> V.t -> V.t option
+  val is_parent : t -> parent:V.t -> child:V.t -> bool
 end
+
+(** Define layout engines.
+
+    If the operations in {!TREE} are O(1), the layout functions are O(n).
+*)
+module Make (G : TREE) :
+  S with type t := G.t
+     and type vertex := G.V.t
