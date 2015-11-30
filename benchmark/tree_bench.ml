@@ -49,8 +49,8 @@ let node, leaf =
 let rec make n =
   if n <= 2 then leaf ()
   else
-    let i = 1 + Random.int ((n-1)/2) in
-    node (make i) (make (n-i-1))
+    let i = 1 + Random.int (n-1) in
+    node (make i) (make (n-i))
 
 let benchs =
   Random.self_init () ;
