@@ -31,7 +31,7 @@ module type S = sig
     ?borders:pos -> pos H.t -> graph -> vertex -> pos * pos
 end
 
-module Raw : sig
+module Layered : sig
 
   module type TREE = sig
     type t

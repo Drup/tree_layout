@@ -38,8 +38,10 @@ end
     Consequently, the code is ugly.
 
     See there for proof/details of how it works.
+
+    Also see https://github.com/abego/treelayout for another implementation.
 *)
-module Raw = struct
+module Layered = struct
 
   module type TREE = sig
     type t
