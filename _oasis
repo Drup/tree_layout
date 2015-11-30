@@ -19,13 +19,13 @@ Library tree_layout
   InternalModules: Tree_layout_utils
   BuildDepends:
 
-Document "tree_layout"
+Document api
   Type: ocamlbuild (0.3)
   BuildTools: ocamldoc
   Title: API reference for Tree_layout
   XOCamlbuildPath: .
   XOCamlbuildExtraArgs:
-    "-docflags '-t Functoria -colorize-code -short-functors -charset utf-8'"
+    "-docflags '-t Tree_layout -colorize-code -short-functors -charset utf-8'"
   XOCamlbuildLibraries: tree_layout
 
 # Tests
