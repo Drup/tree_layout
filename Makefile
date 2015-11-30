@@ -64,5 +64,4 @@ gh-pages: doc/repo/.git doc
 
 release:
 	git tag -a $(VERSION) -m "Version $(VERSION)."
-	git push upstream $(VERSION)
-	$(MAKE) pr
+	git push origin $(VERSION)
