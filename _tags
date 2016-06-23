@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: d9563d5f857e8eebdfb61b4662c6795e)
+# DO NOT EDIT (digest: 64f49e657fbe2cf167f150acea1a844e)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -16,15 +16,23 @@ true: annot, bin_annot
 "_darcs": not_hygienic
 # Library tree_layout
 "src/tree_layout.cmxs": use_tree_layout
-# Executable tree_test
-<tests/tree.{native,byte}>: package(tyxml)
-<tests/tree.{native,byte}>: use_tree_layout
+# Library rose
+"tests/rose.cmxs": use_rose
+# Executable layered_test
+<tests/layered_test.{native,byte}>: package(tyxml)
+<tests/layered_test.{native,byte}>: use_rose
+<tests/layered_test.{native,byte}>: use_tree_layout
 <tests/*.ml{,i,y}>: package(tyxml)
+<tests/*.ml{,i,y}>: use_rose
 <tests/*.ml{,i,y}>: use_tree_layout
 # Executable tree_benchmark
 <benchmark/tree_bench.{native,byte}>: package(benchmark)
+<benchmark/tree_bench.{native,byte}>: package(tyxml)
+<benchmark/tree_bench.{native,byte}>: use_rose
 <benchmark/tree_bench.{native,byte}>: use_tree_layout
 <benchmark/*.ml{,i,y}>: package(benchmark)
+<benchmark/*.ml{,i,y}>: package(tyxml)
+<benchmark/*.ml{,i,y}>: use_rose
 <benchmark/*.ml{,i,y}>: use_tree_layout
 # OASIS_STOP
 

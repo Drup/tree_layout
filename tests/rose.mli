@@ -14,6 +14,22 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *)
 
-module Base = Tree_base
+(** Simple rose trees that fullfill most signatures with the right complexity. *)
 
-module Layered = Tree_layered
+open Tree_layout.Base
+
+type info = {label : int ; w : float ; h : float }
+
+type t = unit
+type tree = Node of info * tree array | Leaf of info
+
+include Tree_layout.Layered.TREE
+  with type t := t
+   and type V.t = tree
+
+(** Randomly generate a tree with [n] nodes. *)
+val gen : int -> tree
+
+module Output ( M : Hashtbl.S with type key = tree ) : sig
+  val doc : int -> pos M.t -> tree -> Tyxml.Svg.doc
+end

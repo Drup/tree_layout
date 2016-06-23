@@ -14,29 +14,16 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *)
 
-module Opt = struct
+(** Common set of types and functions for all other modules. *)
 
-  let get = function
-    | Some x -> x
-    | None -> assert false
+type pos = { x : float ; y : float }
 
-end
+type 'a sequence = ('a -> unit) -> unit
 
+(** [boundaries ~margins positions] returns a pair [(pos, size)]
+    defining a rectangle containing the positions in [positions].
 
-(** minimal sequence stuff *)
-module Seq = struct
-
-  type 'a t = ('a -> unit) -> unit
-
-  let fold_sibling f acc (seq : _ t) =
-    let prev = ref None in
-    let acc = ref acc in
-    seq (fun elt -> acc := f !acc !prev elt ; prev := Some elt)
-
-  let iter f seq = seq f
-
-  let iteri f seq =
-    let k = ref 0 in
-    seq (fun elt -> f !k elt ; incr k)
-
-end
+    The option argument [margins] add a margin around the rectangle.
+*)
+val boundaries :
+  ?margins:pos -> pos sequence -> pos * pos

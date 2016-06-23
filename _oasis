@@ -16,8 +16,8 @@ Flag benchmark
 
 Library tree_layout
   Path: src
-  Modules: Tree_layout
-  InternalModules: Tree_layout_utils
+  Modules: Tree_layout, Tree_layered, Tree_base
+  InternalModules: Tree_utils
   BuildDepends:
 
 Document api
@@ -30,18 +30,27 @@ Document api
   XOCamlbuildLibraries: tree_layout
 
 # Tests
-Executable tree_test
+
+Library rose
+  FindlibParent: tree_layout
+  Build$: flag(tests) | flag(benchmark)
+  Install: false
   Path: tests
-  MainIs: tree.ml
+  Modules: Rose
+  BuildDepends: tree_layout, tyxml
+
+Executable layered_test
+  Path: tests
+  MainIs: layered_test.ml
   Install: false
   Build$: flag(tests)
   CompiledObject: best
-  BuildDepends: tree_layout, tyxml
+  BuildDepends: tree_layout.rose
 
-Test tree_test
-  Command: $tree_test "tree.svg"
+Test layered_test
+  Command: $layered_test "tree.svg"
   WorkingDirectory: _build
-  TestTools: tree_test
+  TestTools: layered_test
   Run$: flag(tests)
 
 # Benchmark
@@ -51,7 +60,7 @@ Executable tree_benchmark
   Install: false
   Build$: flag(benchmark)
   CompiledObject: best
-  BuildDepends: tree_layout, benchmark
+  BuildDepends: tree_layout.rose, benchmark
 
 SourceRepository head
   Type: git

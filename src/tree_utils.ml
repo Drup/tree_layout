@@ -14,6 +14,28 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *)
 
-module Base = Tree_base
+module Opt = struct
 
-module Layered = Tree_layered
+  let get = function
+    | Some x -> x
+    | None -> assert false
+
+end
+
+(** minimal sequence stuff *)
+module Seq = struct
+
+  type 'a t = ('a -> unit) -> unit
+
+  let fold_sibling f acc (seq : _ t) =
+    let prev = ref None in
+    let acc = ref acc in
+    seq (fun elt -> acc := f !acc !prev elt ; prev := Some elt)
+
+  let iter f seq = seq f
+
+  let iteri f seq =
+    let k = ref 0 in
+    seq (fun elt -> f !k elt ; incr k)
+
+end

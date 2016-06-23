@@ -14,6 +14,20 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *)
 
-module Base = Tree_base
+open Rose
+module L = Tree_layout.Layered.Make(Rose)
+module O = Rose.Output (L.H)
+let width (Leaf info | Node (info,_)) = info.w
+let distance l1 l2 = width l1 /. 2. +. 0.2 +. width l2 /. 2.
 
-module Layered = Tree_layered
+let () =
+  Random.self_init () ;
+  let seed = Random.int (1 lsl 29) in
+  Random.init seed ;
+  Printf.printf "Seed : %i\n" seed ;
+
+  let tree = Rose.gen 100 in
+  let h = L.layout ~distance () tree in
+  let file = Format.formatter_of_out_channel @@ open_out Sys.argv.(1) in
+  let doc = O.doc seed h tree in
+  Format.fprintf file "%a@." (Tyxml.Svg.pp ()) doc

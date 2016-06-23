@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: 0b1ee8e8de81ec6ad794e69c4f9b0442)
+# DO NOT EDIT (digest: 4d0fcb438b29714691340a6fe3048103)
 version = "0.1.0"
 description = "Tree_layout"
 archive(byte) = "tree_layout.cma"
@@ -7,5 +7,15 @@ archive(byte, plugin) = "tree_layout.cma"
 archive(native) = "tree_layout.cmxa"
 archive(native, plugin) = "tree_layout.cmxs"
 exists_if = "tree_layout.cma"
+package "rose" (
+ version = "0.1.0"
+ description = "Tree_layout"
+ requires = "tree_layout tyxml"
+ archive(byte) = "rose.cma"
+ archive(byte, plugin) = "rose.cma"
+ archive(native) = "rose.cmxa"
+ archive(native, plugin) = "rose.cmxs"
+ exists_if = "rose.cma"
+)
 # OASIS_STOP
 
