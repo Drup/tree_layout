@@ -19,5 +19,11 @@
 (** Common set of types and functions for all other modules. *)
 module Base = Tree_base
 
-(** Layered trees *)
+
+(** Layered trees
+
+    A layered tree is a tree that is organized by layers: the horizontal position
+    of a node is fixed depending on its depth in the tree, regardless of its height.
+    Only the width is used for computing the position.
+*)
 module Layered = Tree_layered

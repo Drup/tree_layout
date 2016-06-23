@@ -14,6 +14,14 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *)
 
+
+(** Layered trees
+
+    A layered tree is a tree that is organized by layers: the horizontal position
+    of a node is fixed depending on its depth in the tree, regardless of its height.
+    Only the width is used for computing the position.
+*)
+
 open Tree_base
 
 (** The output signature for the layered layout engine. *)
@@ -57,9 +65,9 @@ module type TREE = sig
   val is_parent : t -> parent:V.t -> child:V.t -> bool
 end
 
-(** Define layout engines.
+(** Define layered layout engines.
 
-    If the operations in {!TREE} are O(1), the layout functions are O(n).
+    If the operations in {!TREE} are O(1), the layout functions is O(n).
 *)
 module Make (G : TREE) :
   S with type t := G.t
