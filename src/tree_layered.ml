@@ -40,9 +40,9 @@ module type TREE = sig
 end
 
 
-(** This is a direct implementation of
-    http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.16.8757
-    Consequently, the code is ugly.
+(** Implementation of
+    Drawing routed trees in linear time
+    -- Christoph Buchheim, Michael Jünger and Sebastian Leipert
 
     See there for proof/details of how it works.
 
@@ -181,7 +181,6 @@ module Make (G : TREE) = struct
         | None -> ()
         | Some w ->
           H.add s.prelim v @@ get_prelim s w +. s.distance v w
-          (* This is not in the original paper. *)
       end
     | Some vl -> begin
         let vr = Opt.get @@ G.rightmost_child s.g v in
