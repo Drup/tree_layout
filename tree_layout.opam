@@ -10,7 +10,7 @@ license:      "ISC"
 version: "dev"
 tags: [ "tree" "graph" "drawing" ]
 depends: [
-  "ocaml" {>= "4.02"}
+  "ocaml" {>= "4.03"}
   "dune" {build}
   "tyxml" {with-test & >= "4.3.0"}
 ]
