@@ -94,7 +94,7 @@ module Output (H : Hashtbl.S with type key = tree) = struct
       text ~a:[
         a_x_list [x, None] ; a_y_list [y, None] ;
         a_text_anchor `Middle ; a_font_size "0.4" ;
-      ] [pcdata @@ string_of_int info.label] ;
+      ] [txt @@ string_of_int info.label] ;
     ]
 
   let list_map_array f a = List.map f @@ Array.to_list a
@@ -122,7 +122,7 @@ module Output (H : Hashtbl.S with type key = tree) = struct
         a_width (1200., Some `Px) ; a_height (700., Some `Px) ;
         a_viewBox (pos.x, pos.y, size.x, size.y) ;
       ] (
-        title (pcdata @@ Printf.sprintf "Tree layout -- Seed: %i" seed)::
+        title (txt @@ Printf.sprintf "Tree layout -- Seed: %i" seed)::
         svg_lines h t @ svg_shapes h t
       ))
 end
