@@ -1,0 +1,10 @@
+(executable
+ (name tree_bench)
+ (libraries tree_layout rose benchmark)
+)
+
+(alias
+ (name bench)
+ (deps tree_bench.exe)
+ (action (run ./tree_bench.exe))
+)

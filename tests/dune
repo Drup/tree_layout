@@ -1,0 +1,11 @@
+(library
+ (name rose)
+ (modules Rose)
+ (libraries tree_layout tyxml)
+)
+
+(tests
+ (names layered_test)
+ (modules :standard \ Rose)
+ (libraries rose tree_layout)
+)
