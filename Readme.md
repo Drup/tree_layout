@@ -32,6 +32,6 @@ Currently, only layered layouts are implemented. The [algorithm][] is linear in 
 opam install tree_layout
 ```
 
-[doc]: https://drup.github.io/tree_layout/dev/Tree_layout.html
+[doc]: https://drup.github.io/tree_layout/dev/
 
 
