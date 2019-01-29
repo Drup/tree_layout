@@ -191,7 +191,7 @@ module Make (G : TREE) = struct
                ~defaultAncestor
                ~sibling w)
           vl (G.children s.g v) ;
-        execute_shifts s v ;
+        execute_shifts ~s v ;
         let midpoint =
           ((get_prelim s vl) +. (get_prelim s vr)) /. 2.
         in
