@@ -21,7 +21,7 @@ clean:
 doc:
 	dune build @doc
 
-NAME=tyre
+NAME=tree_layout
 DOCDIR=.gh-pages
 
 $(DOCDIR)/.git:
