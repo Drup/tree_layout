@@ -141,4 +141,22 @@ module Output (H : Hashtbl.S with type key = tree) = struct
         title (txt @@ Printf.sprintf "Tree layout -- Seed: %i" seed)::
         svg_lines hmap t @ svg_shapes hmap t
       ))
+
+  let rec svg_rects h t =
+    let r = H.find h t in
+    match t with
+    | Leaf info -> rect ~label:info.label r
+    | Node (_info, a) ->
+      list_flatmap_array (svg_rects h) a @ rect r
+
+  let treemap seed hmap t =
+    let r = H.find hmap t in
+    M.(svg ~a:[
+        a_width (1200., Some `Px) ; a_height (700., Some `Px) ;
+        viewbox_of_rect r ;
+      ] (
+        title (txt @@ Printf.sprintf "Tree layout -- Seed: %i" seed)::
+        svg_rects hmap t
+      ))
+    
 end

@@ -18,3 +18,4 @@
 
 module Common = Common
 module Layered = Layered
+module Treemaps = Treemaps

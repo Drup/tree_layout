@@ -32,4 +32,5 @@ val gen : int -> tree
 
 module Output ( M : Hashtbl.S with type key = tree ) : sig
   val tree : int -> pos M.t -> tree -> Tyxml.Svg.doc
+  val treemap : int -> rectangle M.t -> tree -> Tyxml.Svg.doc
 end

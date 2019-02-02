@@ -6,6 +6,12 @@
 
 (tests
  (names layered_test)
- (modules :standard \ Rose)
+ (modules Layered_test)
+ (libraries rose tree_layout)
+)
+
+(tests
+ (names treemap_test)
+ (modules Treemap_test)
  (libraries rose tree_layout)
 )
