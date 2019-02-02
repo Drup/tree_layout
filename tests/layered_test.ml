@@ -17,7 +17,7 @@
 open Rose
 module L = Tree_layout.Layered.Make(Rose)
 module O = Rose.Output (L.H)
-let width (Leaf info | Node (info,_)) = info.w
+let width (Leaf info | Node (info,_)) = info.width
 let distance l1 l2 = width l1 /. 2. +. 0.2 +. width l2 /. 2.
 
 let () =
@@ -36,5 +36,5 @@ let () =
   let tree = Rose.gen 100 in
   let h = L.layout ~distance () tree in
   let file = Format.formatter_of_out_channel @@ open_out out in
-  let doc = O.doc seed h tree in
+  let doc = O.tree seed h tree in
   Format.fprintf file "%a@." (Tyxml.Svg.pp ()) doc

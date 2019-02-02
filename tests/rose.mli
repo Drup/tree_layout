@@ -16,9 +16,9 @@
 
 (** Simple rose trees that fullfill most signatures with the right complexity. *)
 
-open Tree_layout.Base
+open Tree_layout.Common
 
-type info = {label : int ; w : float ; h : float }
+type info = {label : int ; width : float ; height : float }
 
 type t = unit
 type tree = Node of info * tree array | Leaf of info
@@ -31,5 +31,5 @@ include Tree_layout.Layered.TREE
 val gen : int -> tree
 
 module Output ( M : Hashtbl.S with type key = tree ) : sig
-  val doc : int -> pos M.t -> tree -> Tyxml.Svg.doc
+  val tree : int -> pos M.t -> tree -> Tyxml.Svg.doc
 end

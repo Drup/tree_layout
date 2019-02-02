@@ -22,7 +22,7 @@
     Only the width is used for computing the position.
 *)
 
-open Tree_base
+open Common
 
 (** The output signature for the layered layout engine. *)
 module type S = sig

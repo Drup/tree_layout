@@ -14,6 +14,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *)
 
-module Base = Tree_base
+(** Algorithms to layout trees in a pretty manner. *)
 
-module Layered = Tree_layered
+module Common = Common
+module Layered = Layered

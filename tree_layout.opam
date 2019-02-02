@@ -12,6 +12,7 @@ tags: [ "tree" "graph" "drawing" ]
 depends: [
   "ocaml" {>= "4.03"}
   "dune" {build}
+  "sequence"
   "tyxml" {with-test & >= "4.3.0"}
 ]
 build: [

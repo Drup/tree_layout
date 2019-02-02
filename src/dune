@@ -3,4 +3,5 @@
  (public_name tree_layout)
  (synopsis  "Algorithms to layout trees in a pretty manner")
  (ocamlopt_flags (:standard -O3))
+ (libraries sequence)
 )

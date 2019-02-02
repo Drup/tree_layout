@@ -14,27 +14,10 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *)
 
-type 'a sequence = ('a -> unit) -> unit
+module Opt = struct
 
-type pos = { x : float ; y : float }
+  let get = function
+    | Some x -> x
+    | None -> assert false
 
-(** {2 Boundaries computation} *)
-
-type bounds = {
-  mutable x0 : float ; mutable y0 : float ;
-  mutable x1 : float ; mutable y1 : float ;
-}
-
-let update_bound b {x;y} =
-  b.x0 <- min b.x0 x ; b.y0 <- min b.y0 y ;
-  b.x1 <- max b.x1 x ; b.y1 <- max b.y1 y
-
-let boundaries ?(margins={x=0.;y=0.;}) k =
-  let b = { x0 = 0. ; y0 = 0. ; x1 = 0. ; y1 = 0. } in
-  k (update_bound b) ;
-  let pos = {x = b.x0 -. margins.x ; y = b.y0 -. margins.y } in
-  let size = {
-    x = 2.*.margins.x +. b.x1 -. b.x0 ;
-    y = 2.*.margins.y +. b.y1 -. b.y0}
-  in
-  (pos, size)
+end

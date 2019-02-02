@@ -14,16 +14,26 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *)
 
-(** Common set of types and functions for all other modules. *)
-
 type pos = { x : float ; y : float }
 
-type 'a sequence = ('a -> unit) -> unit
+type rectangle = { p : pos ; w : float ; h : float }
 
-(** [boundaries ~margins positions] returns a pair [(pos, size)]
-    defining a rectangle containing the positions in [positions].
+(** {2 Boundaries computation} *)
 
-    The option argument [margins] add a margin around the rectangle.
-*)
-val boundaries :
-  ?margins:pos -> pos sequence -> pos * pos
+type bounds = {
+  mutable x0 : float ; mutable y0 : float ;
+  mutable x1 : float ; mutable y1 : float ;
+}
+
+let update_bound b {x;y} =
+  b.x0 <- min b.x0 x ; b.y0 <- min b.y0 y ;
+  b.x1 <- max b.x1 x ; b.y1 <- max b.y1 y
+
+let boundaries ?(margins={x=0.;y=0.;}) k =
+  let b = { x0 = 0. ; y0 = 0. ; x1 = 0. ; y1 = 0. } in
+  k (update_bound b) ;
+  let pos = {x = b.x0 -. margins.x ; y = b.y0 -. margins.y } in
+  { p = pos ;
+    w = 2.*.margins.x +. b.x1 -. b.x0 ;
+    h = 2.*.margins.y +. b.y1 -. b.y0 ;
+  }

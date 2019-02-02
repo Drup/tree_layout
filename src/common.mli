@@ -14,16 +14,16 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *)
 
-(** Algorithms to layout trees in a pretty manner. *)
-
 (** Common set of types and functions for all other modules. *)
-module Base = Tree_base
 
+type pos = { x : float ; y : float }
 
-(** Layered trees
+type rectangle = { p : pos ; w : float ; h : float }
 
-    A layered tree is a tree that is organized by layers: the horizontal position
-    of a node is fixed depending on its depth in the tree, regardless of its height.
-    Only the width is used for computing the position.
+(** [boundaries ~margins positions] returns a pair [(pos, size)]
+    defining a rectangle containing the positions in [positions].
+
+    The option argument [margins] add a margin around the rectangle.
 *)
-module Layered = Tree_layered
+val boundaries :
+  ?margins:pos -> pos Sequence.t -> rectangle
