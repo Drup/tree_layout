@@ -20,6 +20,8 @@
     A layered tree is a tree that is organized by layers: the horizontal position
     of a node is fixed depending on its depth in the tree, regardless of its height.
     Only the width is used for computing the position.
+
+    {%html: <a href="https://drup.github.io/tree_layout/layered_tree.svg"><img style="margin : 0 auto; display: block; max-width:90%" src="https://drup.github.io/tree_layout/layered_tree.svg" /></a> %}
 *)
 
 open Common

@@ -5,6 +5,8 @@
     are treemaps which attempts to keep rectangles as square as possible.
     Functions in this module expect a function to compute the area of a node, and
     return sequences of pair of nodes and rectangles.
+
+    {%html: <a href="https://drup.github.io/tree_layout/treemap.svg"><img style="margin : 0 auto; display: block; max-width:60%" src="https://drup.github.io/tree_layout/treemap.svg" /></a> %}
 *)
 
 

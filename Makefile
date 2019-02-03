@@ -31,6 +31,7 @@ $(DOCDIR)/.git:
 	)
 
 gh-pages: $(DOCDIR)/.git doc
+	git -C $(DOCDIR) pull
 	cp -r _build/default/_doc/_html/* $(DOCDIR)/dev/
 	git -C $(DOCDIR) add --all 
 	git -C $(DOCDIR) commit -a -m "gh-page updates"
