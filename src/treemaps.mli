@@ -14,8 +14,8 @@ open Common
 
 val layout : 
   area:('a -> float) ->
-  children:('a -> 'a Sequence.t) ->
-  rectangle -> 'a -> ('a * rectangle) Sequence.t
+  children:('a -> 'a Iter.t) ->
+  rectangle -> 'a -> ('a * rectangle) Iter.t
 (** [layout ~area ~children rect tree] computes a squarified treemap of [tree]
     and return a sequence of subtrees and their positions.
 
@@ -25,7 +25,7 @@ val layout :
 
 val squarify :
   area:('a -> float) ->
-  rectangle -> 'a Sequence.t -> ('a * rectangle) Sequence.t
+  rectangle -> 'a Iter.t -> ('a * rectangle) Iter.t
 (** [squarify ~area rect l] takes a sequence of elements [l] and 
     decorate them with positions.
 

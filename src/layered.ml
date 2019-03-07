@@ -18,7 +18,7 @@ open Utils
 open Common
 
 
-let fold_sibling f acc (seq : _ Sequence.t) =
+let fold_sibling f acc (seq : _ Iter.t) =
   let prev = ref None in
   let acc = ref acc in
   seq (fun elt -> acc := f !acc !prev elt ; prev := Some elt)
@@ -100,7 +100,7 @@ module Make (G : TREE) = struct
     | Some i -> i
     | None ->
       let f i v = H.add s.numbers v (i+1) in
-      Sequence.iteri f @@ G.children s.g parent ;
+      Iter.iteri f @@ G.children s.g parent ;
       H.find s.numbers v
 
   let move_subtree ~s ~parent wm wp shift =
@@ -122,7 +122,7 @@ module Make (G : TREE) = struct
       shift := !shift +. get ~default:0. s.shift w +. !change ;
       ()
     in
-    Sequence.iter f (G.rev_children s.g v) ;
+    Iter.iter f (G.rev_children s.g v) ;
     ()
 
   let ancestor ~s ~defaultAncestor ~parent vim =
@@ -214,7 +214,7 @@ module Make (G : TREE) = struct
     let y = float level in
     H.add result v {x;y} ;
     let f w = second_walk s result (level+1) w (m +. get_mod s v) in
-    Sequence.iter f (G.children s.g v) ;
+    Iter.iter f (G.children s.g v) ;
     ()
 
   let layout ~distance g r =

@@ -26,4 +26,4 @@ type rectangle = { p : pos ; w : float ; h : float }
     The option argument [margins] add a margin around the rectangle.
 *)
 val boundaries :
-  ?margins:pos -> pos Sequence.t -> rectangle
+  ?margins:pos -> pos Iter.t -> rectangle

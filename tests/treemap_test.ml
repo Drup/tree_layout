@@ -20,11 +20,11 @@ module O = Rose.Output (H)
 let rec area = function
   | Leaf x -> x.width *. x.height *. 2.
   | Node (_, a) ->
-    Sequence.sumf @@ Sequence.map area @@ Sequence.of_array a
+    Iter.sumf @@ Iter.map area @@ Iter.of_array a
       
 let cmp x y = compare (area x) (area y)
 let children t =
-  Sequence.sort ~cmp @@ children () t
+  Iter.sort ~cmp @@ children () t
 
 let layout t =
   let h = H.create 17 in

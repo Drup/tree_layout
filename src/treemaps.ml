@@ -76,7 +76,7 @@ module Squarify = struct
     assert (_equal_pos _pos @@ mv_pos dir rect.p total_len) ;
     init new_rect (opp dir)
 
-  let squarify ~area rect l : _ Sequence.t =
+  let squarify ~area rect l : _ Iter.t =
     let rec place_rect k state elem =
       let updated = add ~area state elem in
       if worst state >= worst updated then
@@ -88,7 +88,7 @@ module Squarify = struct
     let dir0 = if rect.w > rect.h then Horizontal else Vertical in
     let state0 = init rect dir0 in
     fun k ->
-      let state_final = Sequence.fold (place_rect k) state0 l in
+      let state_final = Iter.fold (place_rect k) state0 l in
       let _s =
         if state_final.elements = [] then state_final
         else layout ~area state_final k
@@ -102,12 +102,12 @@ end
 let squarify = Squarify.squarify
 
 
-let layout ~area ~children rect0 t0 : _ Sequence.t =
+let layout ~area ~children rect0 t0 : _ Iter.t =
   let rec go_level k (v, rect) =
     k (v, rect) ;
     let cl = children v in
     let l = squarify ~area rect cl in 
-    Sequence.iter (go_level k) l
+    Iter.iter (go_level k) l
   in
   let area_rect = rect0.w *. rect0.h in
   if area t0 <= area_rect +. _threshold then
