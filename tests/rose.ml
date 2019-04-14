@@ -52,7 +52,7 @@ let is_parent () ~parent ~child = match parent with
 module Gen = struct
 
   let label label =
-    { label ; width = 0.5 +. Random.float 1. ; height = 0.8 }
+    { label ; width = 0.5 +. Random.float 1.5 ; height = 0.8 }
 
   let node, leaf =
     let r = ref 0 in
@@ -60,12 +60,19 @@ module Gen = struct
     let leaf () = incr r ; Leaf (label !r) in
     node, leaf
 
+  let rec make_split ~split total =
+    if split <= 1 || total <= 1 then [total]
+    else
+      let i = 1 + Random.int (total-1) in
+      i :: make_split ~split (total - i)
+  
   let rec make n =
     if n <= 1 then leaf ()
     else
-      let l = 1 + Random.int (min 4 (n-1)) in
-      let a = Array.init l (fun _ -> make ((n-1)/l)) in
-      node a
+      let split = max 1 (Random.int n) in
+      let splits = make_split ~split (n-1) in
+      let a = List.map make splits  in
+      node (Array.of_list a)
 
 end
 
@@ -99,7 +106,8 @@ module Output (H : Hashtbl.S with type key = tree) = struct
     | Some label ->
       M.[text ~a:[
           a_x_list [p.x +. w/.2., None] ; a_y_list [p.y+.h/.2., None] ;
-          a_text_anchor `Middle ; a_font_size "0.4" ;
+          a_text_anchor `Middle; a_dy_list [0.4, Some `Em];
+          a_font_size "0.4" ;
         ] [txt @@ string_of_int label] ;
         ]
   let rect_of_info info {x;y} =
@@ -139,7 +147,8 @@ module Output (H : Hashtbl.S with type key = tree) = struct
         viewbox_of_rect r ;
       ] (
         title (txt @@ Printf.sprintf "Tree layout -- Seed: %i" seed)::
-        svg_lines hmap t @ svg_shapes hmap t
+        svg_lines hmap t @
+        svg_shapes hmap t
       ))
 
   let rec svg_rects h t =
