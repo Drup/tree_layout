@@ -14,40 +14,15 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *)
 
+module T = Tree_layout
+
 type info = {label : int ; width : float ; height : float }
 
-type tree = Node of info * tree array | Leaf of info
-
-let array_rev_iter f a =
-  let last = Array.length a - 1 in
-  for i = last downto 0 do f a.(i) done
-
-type t = unit
-module V = struct
-  type t = tree
-  let equal = (=)
-  let hash = Hashtbl.hash
+module Info = struct
+  type t = info
+  let equal a b = a.label = b.label
+  let hash a = Hashtbl.hash a.label
 end
-
-let children () v k = match v with
-  | Leaf _ -> ()
-  | Node (_, a) -> Array.iter k a
-
-let rev_children () v k = match v with
-  | Leaf _ -> ()
-  | Node (_, a) -> array_rev_iter k a
-
-let leftmost_child () = function
-  | Leaf _ -> None
-  | Node (_, a) -> Some a.(0)
-
-let rightmost_child () = function
-  | Leaf _ -> None
-  | Node (_, a) -> Some a.(Array.length a - 1)
-
-let is_parent () ~parent ~child = match parent with
-  | Leaf _ -> false
-  | Node (_, a) -> Array.exists (V.equal child) a
 
 module Gen = struct
 
@@ -56,8 +31,8 @@ module Gen = struct
 
   let node, leaf =
     let r = ref 0 in
-    let node a = incr r ; Node (label !r, a) in
-    let leaf () = incr r ; Leaf (label !r) in
+    let node a = incr r ; T.Node (label !r, a) in
+    let leaf () = incr r ; T.Node (label !r, [||]) in
     node, leaf
 
   let rec make_split ~split total =
@@ -78,8 +53,7 @@ end
 
 let gen = Gen.make
 
-
-module Output (H : Hashtbl.S with type key = tree) = struct
+module Output = struct
   module M = Tyxml.Svg
   open Tree_layout.Common
 
@@ -121,51 +95,50 @@ module Output (H : Hashtbl.S with type key = tree) = struct
   let list_flatmap_array f a =
     List.concat @@ list_map_array f a
 
-  let rec svg_shapes h t =
-    let pos = H.find h t in
+  let rec svg_shapes t =
     match t with
-    | Leaf info -> rect_of_info info pos
-    | Node (info, a) ->
-      list_flatmap_array (svg_shapes h) a @ rect_of_info info pos
+    | T.Node ((info, pos), [||]) -> rect_of_info info pos
+    | Node ((info, pos), a) ->
+      list_flatmap_array (svg_shapes) a @ rect_of_info info pos
 
-  let rec svg_lines h t =
-    let pos = H.find h t in
+  let rec svg_lines t =
     match t with
-    | Leaf _ -> []
-    | Node (_, a) ->
-      list_map_array (fun x -> line pos @@ H.find h x) a
-      @ list_flatmap_array (svg_lines h) a
+    | T.Node (_, [||]) -> []
+    | Node ((_,pos), a) ->
+      let aux (T.Node ((_,pos'),_)) = line pos pos' in
+      list_map_array aux a
+      @ list_flatmap_array (svg_lines) a
 
   let viewbox_of_rect { p ; w ; h } = M.a_viewBox (p.x, p.y, w, h)
 
-  let tree seed hmap t =
+  let rec iter_tree f (T.Node (x,a)) = f @@ snd x ; Array.iter (iter_tree f) a
+  let tree seed t =
     let r =
-      boundaries ~margins:{x=1.;y=1.} (fun f -> H.iter (fun _ -> f) hmap)
+      boundaries ~margins:{x=1.;y=1.} @@ fun k -> iter_tree k t
     in
     M.(svg ~a:[
         a_width (1200., Some `Px) ; a_height (700., Some `Px) ;
         viewbox_of_rect r ;
       ] (
         title (txt @@ Printf.sprintf "Tree layout -- Seed: %i" seed)::
-        svg_lines hmap t @
-        svg_shapes hmap t
+        svg_lines t @
+        svg_shapes t
       ))
 
-  let rec svg_rects h t =
-    let r = H.find h t in
+  let rec svg_rects t =
     match t with
-    | Leaf info -> rect ~label:info.label r
-    | Node (_info, a) ->
-      list_flatmap_array (svg_rects h) a @ rect r
+    | T.Node ((info,r), [||]) -> rect ~label:info.label r
+    | Node ((_info,r), a) ->
+      list_flatmap_array (svg_rects) a @ rect r
 
-  let treemap seed hmap t =
-    let r = H.find hmap t in
+  let treemap seed t =
+    let (T.Node ((_,r),_)) = t in
     M.(svg ~a:[
         a_width (1200., Some `Px) ; a_height (700., Some `Px) ;
         viewbox_of_rect r ;
       ] (
         title (txt @@ Printf.sprintf "Tree layout -- Seed: %i" seed)::
-        svg_rects hmap t
+        svg_rects t
       ))
     
 end

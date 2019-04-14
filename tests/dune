@@ -1,17 +1,18 @@
 (library
- (name rose)
- (modules Rose)
+ (name test_utils)
+ (modules Utils)
+ (wrapped false)
  (libraries tree_layout tyxml)
 )
 
 (tests
  (names layered_test)
  (modules Layered_test)
- (libraries rose tree_layout)
+ (libraries test_utils tree_layout)
 )
 
 (tests
  (names treemap_test)
  (modules Treemap_test)
- (libraries rose tree_layout)
+ (libraries test_utils tree_layout)
 )

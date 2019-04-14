@@ -14,32 +14,24 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *)
 
-open Rose
-module H = Hashtbl.Make(Rose.V)
-module O = Rose.Output (H)
+open Utils
+module T = Tree_layout
+
 let rec area = function
-  | Leaf x -> x.width *. x.height *. 2.
-  | Node (_, a) ->
-    Iter.sumf @@ Iter.map area @@ Iter.of_array a
-      
-let cmp x y = compare (area x) (area y)
-let children t =
-  Iter.sort ~cmp @@ children () t
+  | T.Node (x,[||]) -> x.width *. x.height *. 2.
+  | T.Node (_,a) ->
+    (Iter.sumf @@ Iter.map area @@ Iter.of_array a)
+let rect_of_tree t : Tree_layout.Common.rectangle =
+  let a = area t in
+  { p = { x = 0. ; y = 0. } ; w = sqrt a; h = sqrt a }
 
 let layout t =
-  let h = H.create 17 in
-  let k (x, p) = H.add h x p in
-  let a = area t in
-  let rect : Tree_layout.Common.rectangle =
-    { p = { x = 0. ; y = 0. } ; w = sqrt a; h = sqrt a }
-  in
-  Tree_layout.Treemaps.layout
+  let rect = rect_of_tree t in
+  T.treemap
+    ~m:(module Utils.Info)
     ~area
-    ~children
     rect
     t
-    k ;
-  h
 
 let () =
   let out =
@@ -54,8 +46,8 @@ let () =
   Random.init seed ;
   Printf.printf "Seed : %i\n" seed ;
 
-  let tree = Rose.gen 100 in
+  let tree = gen 100 in
   let h = layout tree in
   let file = Format.formatter_of_out_channel @@ open_out out in
-  let doc = O.treemap seed h tree in
+  let doc = Output.treemap seed h in
   Format.fprintf file "%a@." (Tyxml.Svg.pp ()) doc

@@ -1,6 +1,6 @@
 (executable
  (name tree_bench)
- (libraries tree_layout rose benchmark)
+ (libraries tree_layout test_utils benchmark)
 )
 
 (alias
