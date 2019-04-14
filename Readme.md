@@ -12,13 +12,13 @@ An easy-to-use [rose tree][rose] API is provided by default:
 
 ```ocaml
 (* Given a tree, ... *)
-let tree : _ Tree_layout.tree = ...
+let tree : 'a Tree_layout.tree = ...
 
 (* and a distance function. *)
 let distance v1 v2 = ...
 
 (* Get annotated tree ! *)
-let annotated_tree =
+let annotated_tree : ('a, Tree_layout.Common.pos) tree =
   Tree_layout.layered ~distance tree
 ```
 
