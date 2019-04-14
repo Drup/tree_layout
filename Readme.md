@@ -1,11 +1,13 @@
 # Tree_layout [![Build Status](https://travis-ci.org/Drup/tree_layout.svg?branch=master)](https://travis-ci.org/Drup/tree_layout) [![docs](https://img.shields.io/badge/doc-online-blue.svg)][doc]
 
-![A tree](https://drup.github.io/tree_layout/layered_tree.svg)
-
 Algorithms to layout trees in a pretty manner.
 
-Currently support layered trees and treemaps.
+![A tree](https://drup.github.io/tree_layout/layered_tree.svg)
+
+This library contains layout algorithms for tree. 
+Currently, two algorithms are implemented: [layered trees][] and [treemaps][].
 See the [documentation][doc] for details.
+
 An easy-to-use [rose tree][rose] API is provided by default:
 
 ```ocaml
@@ -26,5 +28,7 @@ let annotated_tree =
 opam install tree_layout
 ```
 
+[layered_trees]: https://en.wikipedia.org/wiki/Layered_graph_drawing
+[treemaps]: https://en.wikipedia.org/wiki/Treemapping
 [doc]: https://drup.github.io/tree_layout/dev/
 [rose]: https://en.wikipedia.org/wiki/Rose_tree
