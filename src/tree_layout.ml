@@ -16,6 +16,14 @@
 
 (** Algorithms to layout trees in a pretty manner. *)
 
+(** {1 N-ary trees} *)
+
+include Rose
+
+(** {1 Individual algorithms} *)
+
+(** Common types *)
 module Common = Common
+
 module Layered = Layered
 module Treemaps = Treemaps
