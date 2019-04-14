@@ -18,13 +18,53 @@
 (** Layered trees
 
     A layered tree is a tree that is organized by layers: the horizontal position
-    of a node is fixed depending on its depth in the tree, regardless of its height.
-    Only the width is used for computing the position.
+    of a node is fixed depending on its depth in the tree, 
+    regardless of its height.
 
     {%html: <a href="https://drup.github.io/tree_layout/layered_tree.svg"><img style="margin : 0 auto; display: block; max-width:90%" src="https://drup.github.io/tree_layout/layered_tree.svg" /></a> %}
+
+
+{[
+(* Given a nice tree, ... *)
+let tree : Tree.t = ...
+
+(* and a distance function. *)
+let distance v1 v2 = ...
+
+(* Get positions ! *)
+let positions =
+  Tree_layout.Layered.layout
+    ~children:Tree.children
+    ~distance
+    tree
+]}
 *)
 
 open Common
+
+(** [layout ~children ~distance g v] returns the layered layout for
+    the tree [g] rooted in [v]. Layered layout are such that
+    vertices with the same depth have the same vertical coordinate.
+    The layout is returned as a lookup functions from trees to positions.
+
+    This algorithm is in linear time if [children] is constant time.
+    Use {!Make} for a more flexible implementation.
+
+    [distance v1 v2] should return the horizontal distance
+    between [v1] and [v2] placed at the same depth.
+
+    @param m An hashing specification for the tree type. If not provided, polymorphic comparison and hashing are used.
+    @param children Return all the subtrees of a tree.
+
+    @see <http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.16.8757>
+    Improving Walker's Algorithm to Run in Linear Time
+*)
+val layout: 
+  ?m:(module Hashtbl.HashedType with type t = 'a) ->
+  children:('a -> 'a array) ->
+  distance:('a -> 'a -> float) -> 'a -> ('a -> Common.pos)
+
+(** {1 Functorized API} *)
 
 (** The output signature for the layered layout engine. *)
 module type S = sig
@@ -37,25 +77,17 @@ module type S = sig
 
   module H : Hashtbl.S with type key = vertex
 
-  (** [tree_layout ~distance g v] returns the layered layout for
-      the tree [g] rooted in [v]. Layered layout are such that
-      vertices with the same depth have the same vertical coordinate.
-
-      [distance v1 v2] should return the horizontal distance
-      between [v1] and [v2] placed at the same depth.
-
-      The returned hash table contains one binding per
-      accessible vertex in [g].
-
-      @see <http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.16.8757>
-      Improving Walker's Algorithm to Run in Linear Time
-  *)
   val layout :
     distance:(vertex -> vertex -> float) ->
     t -> vertex -> pos H.t
+    (** Same as {!Tree_layout.Layered.layout}, but with the specified
+        implementation. 
 
+        @return An Hashtable which contains one binding per
+        accessible vertex in [g].
+    *)
 end
-
+                         
 (** The input signature for {!Make} *)
 module type TREE = sig
   type t
@@ -67,8 +99,7 @@ module type TREE = sig
   val is_parent : t -> parent:V.t -> child:V.t -> bool
 end
 
-(** Define layered layout engines.
-
+(** Full implementation. 
     If the operations in {!TREE} are O(1), the layout functions is O(n).
 *)
 module Make (G : TREE) :

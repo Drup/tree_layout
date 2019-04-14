@@ -235,3 +235,57 @@ module Make (G : TREE) = struct
     result
 
 end
+
+module type I = Hashtbl.HashedType
+module type VIEW = sig
+  type t
+  val children : t -> t array
+end
+
+let array_rev_iter f a =
+  let last = Array.length a - 1 in
+  for i = last downto 0 do f a.(i) done
+module MakeTree (V : I) (T : VIEW with type t = V.t)  = struct
+
+  type t = unit
+  module V = V
+
+  let children () a k = Array.iter k @@ T.children a
+
+  let rev_children () a k = array_rev_iter k @@ T.children a
+
+  let leftmost_child () a =
+    let a = T.children a in
+    let l = Array.length a in
+    if l = 0 then None else Some a.(0)
+
+  let rightmost_child () a =
+    let a = T.children a in
+    let l = Array.length a in
+    if l = 0 then None else Some a.(l - 1)
+
+  let is_parent () ~parent ~child =
+    Array.exists (V.equal child) @@ T.children parent
+end
+
+let layout
+    (type a)
+    ?(m:(module I with type t = a) option)
+    ~children
+    : distance:_ -> _ -> _ 
+  =
+  let (module I) = match m with
+    | Some m -> m
+    | None ->
+      (module (struct type t = a let equal = (=) let hash = Hashtbl.hash end))
+  in
+  let module X = struct
+    type t = a
+    let children = children
+  end
+  in
+  let module T = MakeTree(I)(X) in
+  let module L = Make(T) in
+  fun ~distance t ->
+    let h = L.layout ~distance () t in
+    L.H.find h
