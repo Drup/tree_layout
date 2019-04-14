@@ -58,24 +58,29 @@ module Squarify = struct
     | Horizontal -> { p ; h ; w = w -. side }
     | Vertical -> { p ; w ; h = h -. side }
 
-  (** Layout a solution in a given rectangle. 
-      Return a new state and the list laid out elements. *)
-  let layout ~area ({dir ; rect ; elements ; _ } as sol) k =
-    let total_len = length sol.dir rect in
-    let side = sol.area /. total_len in
-    let new_rect = cut_rect (opp dir) rect side in
+  (** Layout a solution in a given rectangle.
+      Iterate on the list of laid out elements (by continuation [k])
+      and return the new state. *)
+  let layout ~area sol k =
+    match sol.elements with
+    | [] -> sol
+    | _ -> begin
+        let total_len = length sol.dir sol.rect in
+        let side = sol.area /. total_len in
+        let new_rect = cut_rect (opp sol.dir) sol.rect side in
 
-    let layout_elem pos elem = 
-      let len = total_len *. area elem /. sol.area in
-      let rect = mk_rect dir side pos len in
-      let pos = mv_pos dir pos len in
-      k (elem, rect);
-      pos
-    in
-    let _pos = List.fold_left layout_elem rect.p elements in
-    assert (_equal_pos _pos @@ mv_pos dir rect.p total_len) ;
-    init new_rect (opp dir)
-
+        let layout_elem pos elem = 
+          let len = total_len *. area elem /. sol.area in
+          let rect = mk_rect sol.dir side pos len in
+          let pos = mv_pos sol.dir pos len in
+          k (elem, rect);
+          pos
+        in
+        let _pos = List.fold_left layout_elem sol.rect.p sol.elements in
+        (* assert (_equal_pos _pos @@ mv_pos sol.dir sol.rect.p total_len); *)
+        init new_rect (opp sol.dir)
+      end
+      
   let squarify ~area rect l : _ Iter.t =
     let rec place_rect k state elem =
       let updated = add ~area state elem in
@@ -89,11 +94,7 @@ module Squarify = struct
     let state0 = init rect dir0 in
     fun k ->
       let state_final = Iter.fold (place_rect k) state0 l in
-      let _s =
-        if state_final.elements = [] then state_final
-        else layout ~area state_final k
-      in
-      Format.printf "Final position : %f %f@." _s.rect.w  _s.rect.h ;
+      let _s = layout ~area state_final k in
       assert (_s.rect.w *. _s.rect.h >= -. _threshold);
       ()
 
@@ -116,8 +117,8 @@ let layout ~area ~children rect0 t0 : _ Iter.t =
     invalid_arg @@
     Format.sprintf
       "Tree_layout.Squarify: \
-       This rectangle has area %f, \
-       it can not contain a tree of area %f."
+       This rectangle has area %.30g, \
+       it can not contain a tree of area %.30g."
       area_rect
       (area t0)
 
