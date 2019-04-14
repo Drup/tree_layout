@@ -5,12 +5,12 @@
 ![A tree](https://drup.github.io/tree_layout/layered_tree.svg)
 
 Algorithms to layout trees in a pretty manner.
+Currently support layered trees and treemaps.
+See the [documentation][doc] for details.
 
 ```ocaml
-open Tree_layout
-
 (* Given a well groomed tree module, ... *)
-module Tree : Layered.TREE = ...
+module Tree = ...
 
 (* a tree, ... *)
 let tree : Tree.t = ...
@@ -19,12 +19,10 @@ let tree : Tree.t = ...
 let distance v1 v2 = ...
 
 (* Get positions ! *)
-let positions = Layered.Make(Tree).layout ~distance tree root
+let positions =
+  let module L = Tree_layout.Layered.Make(Tree) in
+  L.layout ~distance tree root
 ```
-
-Currently, only layered layouts are implemented. The [algorithm][] is linear in the size of the tree
-
-[algorithm]: http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.16.8757
 
 ## Install
 
