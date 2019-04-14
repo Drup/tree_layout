@@ -6,6 +6,12 @@ various other modules and instantiate their own layout functions.
 
 type 'a tree =
     Node of 'a * 'a tree array
+(** A n-ary tree. 
+
+    For correct usage in the next functions, 
+    the labels of the nodes should always contain
+    a unique identifier.
+*)
 
 (** Layered trees
 
