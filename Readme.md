@@ -28,7 +28,7 @@ let annotated_tree : ('a, Tree_layout.Common.pos) tree =
 opam install tree_layout
 ```
 
-[layered_trees]: https://en.wikipedia.org/wiki/Layered_graph_drawing
+[layered trees]: https://en.wikipedia.org/wiki/Layered_graph_drawing
 [treemaps]: https://en.wikipedia.org/wiki/Treemapping
 [doc]: https://drup.github.io/tree_layout/dev/
 [rose]: https://en.wikipedia.org/wiki/Rose_tree
