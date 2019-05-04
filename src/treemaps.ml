@@ -76,7 +76,7 @@ module Squarify = struct
           k (elem, rect);
           pos
         in
-        let _pos = List.fold_left layout_elem sol.rect.p sol.elements in
+        let _pos = List.fold_left layout_elem sol.rect.p (List.rev sol.elements) in
         (* assert (_equal_pos _pos @@ mv_pos sol.dir sol.rect.p total_len); *)
         init new_rect (opp sol.dir)
       end
@@ -84,13 +84,13 @@ module Squarify = struct
   let squarify ~area rect l : _ Iter.t =
     let rec place_rect k state elem =
       let updated = add ~area state elem in
-      if worst state >= worst updated then
+      if worst updated <= worst state then
         updated
       else
         let state = layout ~area state k in
         place_rect k state elem
     in
-    let dir0 = if rect.w > rect.h then Horizontal else Vertical in
+    let dir0 = if rect.h > rect.w then Horizontal else Vertical in
     let state0 = init rect dir0 in
     fun k ->
       let state_final = Iter.fold (place_rect k) state0 l in
