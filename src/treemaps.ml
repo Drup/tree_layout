@@ -58,6 +58,9 @@ module Squarify = struct
     | Horizontal -> { p ; h ; w = w -. side }
     | Vertical -> { p ; w ; h = h -. side }
 
+  let compute_dir rect =
+    if rect.h > rect.w then Horizontal else Vertical
+
   (** Layout a solution in a given rectangle.
       Iterate on the list of laid out elements (by continuation [k])
       and return the new state. *)
@@ -78,7 +81,7 @@ module Squarify = struct
         in
         let _pos = List.fold_left layout_elem sol.rect.p (List.rev sol.elements) in
         (* assert (_equal_pos _pos @@ mv_pos sol.dir sol.rect.p total_len); *)
-        init new_rect (opp sol.dir)
+        init new_rect (compute_dir new_rect)
       end
       
   let squarify ~area rect l : _ Iter.t =
@@ -90,7 +93,7 @@ module Squarify = struct
         let state = layout ~area state k in
         place_rect k state elem
     in
-    let dir0 = if rect.h > rect.w then Horizontal else Vertical in
+    let dir0 = compute_dir rect in
     let state0 = init rect dir0 in
     fun k ->
       let state_final = Iter.fold (place_rect k) state0 l in
