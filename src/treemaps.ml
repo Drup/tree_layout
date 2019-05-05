@@ -13,6 +13,9 @@ module Squarify = struct
     | Vertical -> rect.h
   let opp = function Horizontal -> Vertical | Vertical -> Horizontal
 
+  let compute_dir rect =
+    if rect.h > rect.w then Horizontal else Vertical
+
   type 'a state = {
     rect : rectangle ;
     dir : dir ;
@@ -24,19 +27,21 @@ module Squarify = struct
 
   let add ~area sol x =
     let a = area x in {
-      sol with 
+      rect = sol.rect ;
+      dir = sol.dir ;
       elements = x :: sol.elements ;
       area = a +. sol.area ;
-      smallest = min a sol.area ;
-      biggest = max a sol.area ;
+      smallest = min a sol.smallest ;
+      biggest = max a sol.biggest ;
     }
 
-  let init rect dir = {
-    rect ; dir ;
+  let init rect = {
+    rect ;
+    dir = compute_dir rect ;
     elements = [] ;
     area = 0. ;
     smallest = max_float ;
-    biggest = min_float ;
+    biggest = 0. ;
   }
 
   (** Return the worst aspect ratio *) 
@@ -58,47 +63,48 @@ module Squarify = struct
     | Horizontal -> { p ; h ; w = w -. side }
     | Vertical -> { p ; w ; h = h -. side }
 
-  let compute_dir rect =
-    if rect.h > rect.w then Horizontal else Vertical
 
   (** Layout a solution in a given rectangle.
       Iterate on the list of laid out elements (by continuation [k])
       and return the new state. *)
   let layout ~area sol k =
-    match sol.elements with
-    | [] -> sol
-    | _ -> begin
-        let total_len = length sol.dir sol.rect in
-        let side = sol.area /. total_len in
-        let new_rect = cut_rect (opp sol.dir) sol.rect side in
+    let total_len = length sol.dir sol.rect in
+    let side = sol.area /. total_len in
+    let new_rect = cut_rect (opp sol.dir) sol.rect side in
 
-        let layout_elem pos elem = 
-          let len = total_len *. area elem /. sol.area in
-          let rect = mk_rect sol.dir side pos len in
-          let pos = mv_pos sol.dir pos len in
-          k (elem, rect);
-          pos
-        in
-        let _pos = List.fold_left layout_elem sol.rect.p (List.rev sol.elements) in
-        (* assert (_equal_pos _pos @@ mv_pos sol.dir sol.rect.p total_len); *)
-        init new_rect (compute_dir new_rect)
+    let layout_elem pos elem = 
+      let len = total_len *. area elem /. sol.area in
+      let rect = mk_rect sol.dir side pos len in
+      let pos = mv_pos sol.dir pos len in
+      k (elem, rect);
+      pos
+    in
+    let _pos = List.fold_left layout_elem sol.rect.p (List.rev sol.elements) in
+    (* assert (_equal_pos _pos @@ mv_pos sol.dir sol.rect.p total_len); *)
+    init new_rect
+
+  let layout_remaining ~area sol k =
+    match sol.elements with
+    | [] -> ()
+    | _ -> begin
+        let _s = layout ~area sol k in
+        assert (_s.rect.w *. _s.rect.h >= -. _threshold);
+        ()
       end
       
   let squarify ~area rect l : _ Iter.t =
-    let rec place_rect k state elem =
+    let place_rect k state elem =
       let updated = add ~area state elem in
       if worst updated <= worst state then
         updated
       else
-        let state = layout ~area state k in
-        place_rect k state elem
+        let new_state = layout ~area state k in
+        add ~area new_state elem
     in
-    let dir0 = compute_dir rect in
-    let state0 = init rect dir0 in
+    let state0 = init rect in
     fun k ->
       let state_final = Iter.fold (place_rect k) state0 l in
-      let _s = layout ~area state_final k in
-      assert (_s.rect.w *. _s.rect.h >= -. _threshold);
+      layout_remaining ~area state_final k ;
       ()
 
 end
