@@ -81,14 +81,14 @@ module Squarify = struct
     in
     let _pos = List.fold_left layout_elem sol.rect.p (List.rev sol.elements) in
     (* assert (_equal_pos _pos @@ mv_pos sol.dir sol.rect.p total_len); *)
-    init new_rect
+    new_rect
 
   let layout_remaining ~area sol k =
     match sol.elements with
     | [] -> ()
     | _ -> begin
         let _s = layout ~area sol k in
-        assert (_s.rect.w *. _s.rect.h >= -. _threshold);
+        assert (_s.w *. _s.h >= -. _threshold);
         ()
       end
       
@@ -98,7 +98,8 @@ module Squarify = struct
       if worst updated <= worst state then
         updated
       else
-        let new_state = layout ~area state k in
+        let new_rect = layout ~area state k in
+        let new_state = init new_rect in
         add ~area new_state elem
     in
     let state0 = init rect in
@@ -112,12 +113,12 @@ end
 let squarify = Squarify.squarify
 
 
-let layout ~area ~children rect0 t0 : _ Iter.t =
+let layout ?(sub=fun x -> x) ~area ~children rect0 t0 : _ Iter.t =
   let rec go_level k (v, rect) =
     k (v, rect) ;
     let cl = children v in
     let l = squarify ~area rect cl in 
-    Iter.iter (go_level k) l
+    Iter.iter (fun (x,r) -> go_level k (x,sub r)) l
   in
   let area_rect = rect0.w *. rect0.h in
   if area t0 <= area_rect +. _threshold then

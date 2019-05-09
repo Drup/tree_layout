@@ -12,7 +12,8 @@
 
 open Common
 
-val layout : 
+val layout :
+  ?sub:(rectangle -> rectangle) ->
   area:('a -> float) ->
   children:('a -> 'a Iter.t) ->
   rectangle -> 'a -> ('a * rectangle) Iter.t

@@ -31,9 +31,9 @@ let layered ?m =
     let lookup = f ~distance t in
     decorate lookup t
 
-let treemap_iter ~area =
+let treemap_iter ?sub ~area =
   let children (Node (_, a)) k = Array.iter k a in
-  Treemaps.layout
+  Treemaps.layout ?sub
     ~children ~area
 
 let rec decorate f (Node (i,a)) =
@@ -53,8 +53,8 @@ let treemap
     k (fun (Node (v, _), r) -> H.add h v r) ;
     h
   in
-  fun ~area r t -> 
-    let h = hash_of_iter @@ treemap_iter ~area r t in
+  fun ?sub ~area r t -> 
+    let h = hash_of_iter @@ treemap_iter ?sub ~area r t in
     decorate (H.find h) t
   
 

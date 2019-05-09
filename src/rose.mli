@@ -4,6 +4,8 @@ Users who would like to use their own tree data-structures can consult the
 various other modules and instantiate their own layout functions.
 *)
 
+open Common
+
 type 'a tree =
     Node of 'a * 'a tree array
 (** A n-ary tree. 
@@ -29,6 +31,7 @@ val layered :
 *)
 val treemap :
   ?m:(module Hashtbl.HashedType with type t = 'a) ->
+  ?sub:(rectangle -> rectangle) ->
   area:('a tree -> float) ->
   Common.rectangle -> 'a tree ->
   ('a * Common.rectangle) tree
