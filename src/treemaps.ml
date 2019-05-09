@@ -116,9 +116,10 @@ let squarify = Squarify.squarify
 let layout ?(sub=fun x -> x) ~area ~children rect0 t0 : _ Iter.t =
   let rec go_level k (v, rect) =
     k (v, rect) ;
+    let rect = sub rect in
     let cl = children v in
     let l = squarify ~area rect cl in 
-    Iter.iter (fun (x,r) -> go_level k (x,sub r)) l
+    Iter.iter (go_level k) l
   in
   let area_rect = rect0.w *. rect0.h in
   if area t0 <= area_rect +. _threshold then
