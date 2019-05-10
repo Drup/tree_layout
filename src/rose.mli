@@ -20,7 +20,7 @@ type 'a tree =
     See {!Tree_layout.Layered} for details.
 *)
 val layered : 
-  ?m:(module Hashtbl.HashedType with type t = 'a) ->
+  ?m:(module Hashtbl.HashedType with type t = 'a tree) ->
   distance:('a tree -> 'a tree -> float) ->
   'a tree ->
   ('a * Common.pos) tree
@@ -30,7 +30,7 @@ val layered :
     See {!Tree_layout.Treemaps} for details.
 *)
 val treemap :
-  ?m:(module Hashtbl.HashedType with type t = 'a) ->
+  ?m:(module Hashtbl.HashedType with type t = 'a tree) ->
   ?sub:(rectangle -> rectangle) ->
   area:('a tree -> float) ->
   Common.rectangle -> 'a tree Iter.t ->

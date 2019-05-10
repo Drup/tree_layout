@@ -4,22 +4,17 @@ type 'a tree =
 let children (Node (_, a)) = a
 
 module type I = Hashtbl.HashedType 
-module Lift (I : I) = struct
-  type t = I.t tree
-  let equal (Node (v1,_)) (Node (v2,_)) = I.equal v1 v2
-  let hash (Node (v,_)) = I.hash v
-end
 
 let layered_lookup
     (type a)
-    ?(m:(module I with type t = a) option)
+    ?(m:(module I with type t = a tree) option)
     =
   let (module I) = match m with
     | Some m -> m
     | None ->
-      (module (struct type t = a let equal = (=) let hash = Hashtbl.hash end))
+      (module (struct type t = a tree let equal = (=) let hash = Hashtbl.hash end))
   in
-  let module T = Lift(I) in
+  let module T = I in
   Layered.layout
     ~m:(module T) ~children
 
@@ -36,21 +31,21 @@ let treemap_iter ?sub ~area =
   Treemaps.layout ?sub
     ~children ~area
 
-let rec decorate f (Node (i,a)) =
-  Node ((i, f i), Array.map (decorate f) a)
+let rec decorate f (Node (i,a) as t) =
+  Node ((i, f t), Array.map (decorate f) a)
 let treemap
     (type a)
-    ?(m:(module I with type t = a) option)
+    ?(m:(module I with type t = a tree) option)
     =
   let (module I) = match m with
     | Some m -> m
     | None ->
-      (module (struct type t = a let equal = (=) let hash = Hashtbl.hash end))
+      (module (struct type t = a tree let equal = (=) let hash = Hashtbl.hash end))
   in
   let module H = Hashtbl.Make(I) in
   let hash_of_iter k =
     let h = H.create 17 in
-    k (fun (Node (v, _), r) -> H.add h v r) ;
+    k (fun (t, r) -> H.add h t r) ;
     h
   in
   fun ?sub ~area r t -> 
