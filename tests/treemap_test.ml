@@ -31,7 +31,7 @@ let layout t =
     ~m:(module Utils.Info)
     ~area
     rect
-    t
+    (Iter.singleton t)
 
 let () =
   let out =
@@ -49,5 +49,5 @@ let () =
   let tree = gen 100 in
   let h = layout tree in
   let file = Format.formatter_of_out_channel @@ open_out out in
-  let doc = Output.treemap seed h in
+  let doc = Output.treemap seed (rect_of_tree tree) h in
   Format.fprintf file "%a@." (Tyxml.Svg.pp ()) doc

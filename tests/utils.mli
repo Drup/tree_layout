@@ -20,12 +20,16 @@ open Tree_layout
 
 type info = {label : int ; width : float ; height : float }
 
-module Info : Hashtbl.HashedType with type t = info
+module Info : Hashtbl.HashedType with type t = info tree
 
 (** Randomly generate a tree with [n] nodes. *)
 val gen : int -> info tree
 
 module Output : sig
   val tree : int -> (info * Common.pos) tree -> Tyxml.Svg.doc
-  val treemap : int -> (info * Common.rectangle) tree -> Tyxml.Svg.doc
+  val treemap :
+    int -> 
+    Common.rectangle ->
+    (info * Common.rectangle) tree Iter.t ->
+    Tyxml.Svg.doc
 end

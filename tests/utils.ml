@@ -19,9 +19,9 @@ module T = Tree_layout
 type info = {label : int ; width : float ; height : float }
 
 module Info = struct
-  type t = info
-  let equal a b = a.label = b.label
-  let hash a = Hashtbl.hash a.label
+  type t = info T.tree
+  let equal (T.Node (a,_)) (T.Node (b, _)) = a.label = b.label
+  let hash (T.Node (a,_)) = Hashtbl.hash a.label
 end
 
 module Gen = struct
@@ -131,14 +131,13 @@ module Output = struct
     | Node ((_info,r), a) ->
       list_flatmap_array (svg_rects) a @ rect r
 
-  let treemap seed t =
-    let (T.Node ((_,r),_)) = t in
+  let treemap seed r t =
     M.(svg ~a:[
         a_width (1200., Some `Px) ; a_height (700., Some `Px) ;
         viewbox_of_rect r ;
       ] (
         title (txt @@ Printf.sprintf "Tree layout -- Seed: %i" seed)::
-        svg_rects t
+        (List.flatten @@ Iter.to_list @@ Iter.map svg_rects t)
       ))
     
 end
