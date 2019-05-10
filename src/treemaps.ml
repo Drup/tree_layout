@@ -112,8 +112,7 @@ end
 
 let squarify = Squarify.squarify
 
-
-let layout ?(sub=fun x -> x) ~area ~children rect0 t0 : _ Iter.t =
+let layout ?(sub=fun x -> x) ~area ~children rect0 l0 : _ Iter.t =
   let rec go_level k (v, rect) =
     k (v, rect) ;
     let rect = sub rect in
@@ -121,18 +120,9 @@ let layout ?(sub=fun x -> x) ~area ~children rect0 t0 : _ Iter.t =
     let l = squarify ~area rect cl in 
     Iter.iter (go_level k) l
   in
-  let area_rect = rect0.w *. rect0.h in
-  if area t0 <= area_rect +. _threshold then
-    fun k -> go_level k (t0, rect0)
-  else
-    invalid_arg @@
-    Format.sprintf
-      "Tree_layout.Squarify: \
-       This rectangle has area %.30g, \
-       it can not contain a tree of area %.30g."
-      area_rect
-      (area t0)
-
+  fun k ->
+    let l = squarify ~area rect0 l0 in
+    Iter.iter (go_level k) l
 
 (*
  * Copyright (c) 2019 Gabriel Radanne <drupyog@zoho.com>

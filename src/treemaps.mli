@@ -16,8 +16,8 @@ val layout :
   ?sub:(rectangle -> rectangle) ->
   area:('a -> float) ->
   children:('a -> 'a Iter.t) ->
-  rectangle -> 'a -> ('a * rectangle) Iter.t
-(** [layout ~area ~children rect tree] computes a squarified treemap of [tree]
+  rectangle -> 'a Iter.t -> ('a * rectangle) Iter.t
+(** [layout ~area ~children rect trees] computes a squarified treemap of [trees]
     and return a sequence of subtrees and their positions.
 
     @param area Return the area of a subtree.

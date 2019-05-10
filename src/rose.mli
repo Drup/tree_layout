@@ -33,5 +33,5 @@ val treemap :
   ?m:(module Hashtbl.HashedType with type t = 'a) ->
   ?sub:(rectangle -> rectangle) ->
   area:('a tree -> float) ->
-  Common.rectangle -> 'a tree ->
-  ('a * Common.rectangle) tree
+  Common.rectangle -> 'a tree Iter.t ->
+  ('a * Common.rectangle) tree Iter.t

@@ -38,7 +38,7 @@ let treemap_iter ?sub ~area =
 
 let rec decorate f (Node (i,a)) =
   Node ((i, f i), Array.map (decorate f) a)
-let treemap 
+let treemap
     (type a)
     ?(m:(module I with type t = a) option)
     =
@@ -55,9 +55,7 @@ let treemap
   in
   fun ?sub ~area r t -> 
     let h = hash_of_iter @@ treemap_iter ?sub ~area r t in
-    decorate (H.find h) t
-  
-
+    Iter.map (decorate (H.find h)) t
 
 (*
  * Copyright (c) 2019 Gabriel Radanne <drupyog@zoho.com>
