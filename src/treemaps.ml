@@ -88,7 +88,7 @@ module Squarify = struct
     | [] -> ()
     | _ -> begin
         let _s = layout ~area sol k in
-        assert (_s.w *. _s.h >= -. _threshold);
+        (* assert (_s.w *. _s.h >= -. _threshold); *)
         ()
       end
       
